@@ -10,6 +10,7 @@ import Product from "./pages/Product";
 import Cart from "./pages/Cart";
 import ProductRegister from "./pages/ProductRegister";
 import Home from "./pages/Home";
+import ProtectedRoute from "./pages/ProdectedRoute";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -23,10 +24,27 @@ const router = createBrowserRouter([
         index: true,
         element: <Home />,
       },
-      { path: "/products", element: <Products /> },
+      {
+        path: "/products",
+        element: <Products />,
+      },
       { path: "/product/:id", element: <Product /> },
-      { path: "/cart", element: <Cart /> },
-      { path: "/product/register", element: <ProductRegister /> },
+      {
+        path: "/cart",
+        element: (
+          <ProtectedRoute>
+            <Cart />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/product/register",
+        element: (
+          <ProtectedRoute requireAdmin>
+            <ProductRegister />
+          </ProtectedRoute>
+        ),
+      },
     ],
   },
 ]);
