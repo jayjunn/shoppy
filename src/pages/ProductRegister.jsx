@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { image } from "../api/uploader";
+import { imageUpload } from "../api/uploader";
+import { addNewProduct } from "../utils/firebase";
 
 export default function ProductRegister() {
   const [product, setProduct] = useState();
   const [file, setFile] = useState();
-
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     if (name === "file") {
@@ -20,11 +20,17 @@ export default function ProductRegister() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    image(file).then((res) => {
-      console.log(res);
-    });
+    imageUpload(file)
+      .then((url) => {
+        setProduct({ ...product, imgUrl: url });
+        return product;
+      })
+      .then((product) => {
+        addNewProduct(product);
+      });
   };
+
+  console.log(product);
   const textInputStyle =
     "border border-slate-300 p-2 focus:outline-none mb-4 w-full";
   return (

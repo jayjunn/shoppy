@@ -43,10 +43,14 @@ const adminUser = async (user) => {
         const isAdmin = admins.includes(user.uid);
         return { ...user, isAdmin };
       } else {
-        return user
+        return user;
       }
     })
     .catch((error) => {
       console.error(error);
     });
+};
+
+export const addNewProduct = async (product) => {
+  console.log("add new product", product);
 };
