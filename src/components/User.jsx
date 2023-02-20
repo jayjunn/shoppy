@@ -1,7 +1,6 @@
 import React from "react";
 
 export default function User({ user: { displayName, photoURL } }) {
-  console.log(photoURL, displayName);
   return (
     <div className="mr-3 flex items-center">
       <img

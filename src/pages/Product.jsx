@@ -1,19 +1,31 @@
 import React, { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import { addToCart } from "../api/firebase";
+import { useCartContext } from "../context/CartContext";
 
 export default function Product() {
   const [selectedOption, setSelectedOption] = useState(null);
+  const [validation, setValidation] = useState("");
   const {
     state: { product },
   } = useLocation();
   const { imageUrl, name, price, options, description } = product;
-  const navigate = useNavigate();
+  const { addNum } = useCartContext();
 
   const handleOptionClick = (value) => {
     setSelectedOption(value);
   };
-  const handleAddToCart = () => {
-    // navigate('/cart')
+  const handleAddToCart = (product, size) => {
+    if (selectedOption) {
+      addToCart(product, size);
+      addNum();
+    } else {
+      setValidation("Please select a size");
+      setTimeout(() => {
+        setValidation(null);
+      }, 900);
+    }
+    return;
   };
 
   return (
@@ -33,6 +45,7 @@ export default function Product() {
               return (
                 <button
                   onClick={() => handleOptionClick(option)}
+                  key={option}
                   className={`mr-2 h-10 w-10 border-2 border-gray-500 p-2  ${
                     option === selectedOption ? "bg-slate-100" : ""
                   }`}
@@ -43,8 +56,11 @@ export default function Product() {
             })}
           </ul>
         </div>
-        <button className="mb-10 w-full border bg-indigo-700 px-10 py-4 text-white">
-          Add To Cart
+        <button
+          className="mb-10 w-full border bg-indigo-700 px-10 py-4 text-white"
+          onClick={() => handleAddToCart(product, selectedOption)}
+        >
+          {validation ? `${validation}` : "Add To Cart"}
         </button>
         <div className="mb-10 md:mb-0">
           <h1 className="mb-3 uppercase">Product Description</h1>

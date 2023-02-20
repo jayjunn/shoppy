@@ -95,7 +95,7 @@ export default function ProductRegister() {
             className={textInputStyle}
             onChange={handleChange}
           >
-            <option value="Women" selected>
+            <option value="Women" >
               Women
             </option>
             <option value="Men">Men</option>

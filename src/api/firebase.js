@@ -32,7 +32,6 @@ export const logout = () => {
 export const onAuthStateChange = (callback) => {
   onAuthStateChanged(auth, async (user) => {
     const updateUser = user ? await adminUser(user) : null;
-    console.log(updateUser);
     callback(updateUser);
   });
 };
@@ -72,6 +71,29 @@ export const getProducts = async () => {
       if (snapshot.exists()) {
         const products = Object.values(snapshot.val());
         return products;
+      }
+      return [];
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+};
+
+export const addToCart = async (product, size) => {
+  const id = uuid();
+  const addedItem = { ...product, size, id, quantity: 1};
+  console.log(addedItem);
+  return set(ref(database, `cart/${id}`), addedItem);
+};
+
+export const getCart = async (callback) => {
+    console.log('get cart called')
+  return get(ref(database, `cart`))
+    .then((snapshot) => {
+      if (snapshot.exists()) {
+        const addProducts = Object.values(snapshot.val());
+        callback(addProducts);
+        return addProducts;
       }
       return [];
     })

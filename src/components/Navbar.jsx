@@ -6,10 +6,12 @@ import {
 } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContext";
+import { useCartContext } from "../context/CartContext";
 import User from "./User";
 
 export default function Navbar() {
   const { user, login, logout } = useAuthContext();
+  const { numOfProducts } = useCartContext();
   return (
     <nav className="flex items-center justify-between p-2">
       <Link to={"/"} className="flex items-center">
@@ -18,9 +20,12 @@ export default function Navbar() {
       </Link>
       <div className="flex items-center">
         {user && (
-          <Link to={"/cart"} className="mr-3">
-            <IoCartOutline size={40} />
-          </Link>
+          <>
+            <Link to={"/cart"} className="mr-3 flex items-center">
+              <IoCartOutline size={40} />
+              <span>{numOfProducts >= 1 && `(${numOfProducts})`}</span>
+            </Link>
+          </>
         )}
         {user?.isAdmin && (
           <Link to={"/product/register"} className="mr-3">
