@@ -1,12 +1,17 @@
+import { QueryClientProvider, QueryClient } from "react-query";
 import { Outlet } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import { AuthContextProvider } from "./context/AuthContext";
 
+const queryClient = new QueryClient();
+
 function App() {
   return (
     <AuthContextProvider>
-      <Navbar />
-      <Outlet />
+      <QueryClientProvider client={queryClient}>
+        <Navbar />
+        <Outlet />
+      </QueryClientProvider>
     </AuthContextProvider>
   );
 }
