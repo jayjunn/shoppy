@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { imageUpload } from "../api/uploader";
-import { addNewProduct } from "../utils/firebase";
+import { addProduct } from "../api/firebase";
 
 export default function ProductRegister() {
   const [product, setProduct] = useState();
   const [file, setFile] = useState();
+  const [isLoading, setIsLoading] = useState(false);
+  const [success, setSuccess] = useState(null);
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     if (name === "file") {
@@ -20,21 +22,24 @@ export default function ProductRegister() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     imageUpload(file)
       .then((url) => {
-        setProduct({ ...product, imgUrl: url });
-        return product;
+        addProduct(product, url);
       })
-      .then((product) => {
-        addNewProduct(product);
-      });
+      .then(() => {
+        setSuccess("Product has been registered Successfully");
+        setTimeout(() => {
+          setSuccess(null);
+        }, 3000);
+      })
+      .finally(() => setIsLoading(false));
   };
 
-  console.log(product);
   const textInputStyle =
     "border border-slate-300 p-2 focus:outline-none mb-4 w-full";
   return (
-    <div className="flex flex-col items-center px-1">
+    <section className="mb-12 flex flex-col items-center px-1">
       <h1 className="mb-5 text-2xl">New Product Register</h1>
       <div className="flex h-96 w-full items-center justify-center">
         {!file && (
@@ -68,6 +73,7 @@ export default function ProductRegister() {
             type="text"
             className={textInputStyle}
             name="name"
+            required
             onChange={handleChange}
           />
         </label>
@@ -77,17 +83,23 @@ export default function ProductRegister() {
             type="text"
             className={textInputStyle}
             name="price"
+            required
             onChange={handleChange}
           />
         </label>
         <label className="flex flex-col">
           <span>Category</span>
-          <input
-            type="text"
-            className={textInputStyle}
+          <select
             name="category"
+            id="category"
+            className={textInputStyle}
             onChange={handleChange}
-          />
+          >
+            <option value="Women" selected>
+              Women
+            </option>
+            <option value="Men">Men</option>
+          </select>
         </label>
         <label className="flex flex-col">
           <span>Description</span>
@@ -95,6 +107,7 @@ export default function ProductRegister() {
             type="text"
             className={textInputStyle}
             name="description"
+            required
             onChange={handleChange}
           />
         </label>
@@ -103,12 +116,18 @@ export default function ProductRegister() {
           <input
             type="text"
             className={textInputStyle}
-            name="option"
+            name="options"
+            required
             onChange={handleChange}
           />
         </label>
-        <button>Register</button>
+        <button
+          className="w-full bg-slate-400 py-4 text-white"
+          disabled={isLoading}
+        >
+          {success ? <p>{success}</p> : isLoading ? "Uploading" : "Register"}
+        </button>
       </form>
-    </div>
+    </section>
   );
 }
