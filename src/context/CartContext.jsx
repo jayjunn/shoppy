@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { getCart } from "../api/firebase";
+import { getCart, updateCartItem } from "../api/firebase";
 
 const CartContext = createContext();
 
@@ -17,12 +17,28 @@ export const CartContextProvider = ({ children }) => {
     });
   };
 
+  const setCartItem = async (product) => {
+    updateCartItem(product).then(() => fetchCart());
+  };
+
+  const setQuantity = async (product, updatedQuantity) => {
+    updateCartItem(product, updatedQuantity).then(() => fetchCart());
+  };
+
   useEffect(() => {
     fetchCart();
   }, [numOfProducts]);
+
   return (
     <CartContext.Provider
-      value={{ products, numOfProducts, addNum, fetchCart }}
+      value={{
+        products,
+        numOfProducts,
+        addNum,
+        fetchCart,
+        setCartItem,
+        setQuantity,
+      }}
     >
       {children}
     </CartContext.Provider>

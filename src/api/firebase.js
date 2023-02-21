@@ -2,7 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { getDatabase, ref, get, set } from "firebase/database";
+import { getDatabase, ref, get, set, remove, update } from "firebase/database";
 import { v4 as uuid } from "uuid";
 
 const firebaseConfig = {
@@ -92,10 +92,24 @@ export const getCart = async (callback) => {
         const addProducts = Object.values(snapshot.val());
         callback(addProducts);
         return addProducts;
+      } else {
+        callback([]);
+        return [];
       }
-      return [];
     })
     .catch((error) => {
       console.error(error);
     });
+};
+
+export const updateCartItem = async (product, newQuantity) => {
+  const updatedProduct = { ...product, quantity: newQuantity };
+  if (newQuantity) {
+    return set(ref(database, `cart/${product.id}`), updatedProduct);
+  }
+  if (newQuantity === 0 || !newQuantity) {
+    remove(ref(database, `cart/${product.id}`));
+    console.log("deleted");
+  }
+  return;
 };
