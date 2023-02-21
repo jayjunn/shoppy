@@ -6,12 +6,14 @@ import {
 } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContext";
-import { useCartContext } from "../context/CartContext";
+import useCarts from "../hooks/useCarts";
 import User from "./User";
 
 export default function Navbar() {
-  const { user, login, logout } = useAuthContext();
-  const { numOfProducts } = useCartContext();
+  const { user, login, logout, uid } = useAuthContext();
+  const {
+    cartQuery: { data: products },
+  } = useCarts(uid);
 
   return (
     <nav className="flex items-center justify-between p-2">
@@ -24,7 +26,7 @@ export default function Navbar() {
           <>
             <Link to={"/cart"} className="mr-3 flex items-center">
               <IoCartOutline size={40} />
-              <span>{numOfProducts >= 1 && `(${numOfProducts})`}</span>
+              {products && products.length >= 1 && <p>{products.length}</p>}
             </Link>
           </>
         )}

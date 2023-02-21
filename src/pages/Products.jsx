@@ -1,17 +1,13 @@
 import React from "react";
-import { useQuery } from "react-query";
-import { getProducts } from "../api/firebase";
 import ProductCard from "../components/ProductCard";
+import useProduct from "../hooks/useProducts";
 
 export default function Product() {
   const {
-    isLoading,
-    error,
-    data: products,
-  } = useQuery(["products"], getProducts);
-
+    productsQuery: { isLoading, error, data: products },
+  } = useProduct();
   return (
-    <div>
+    <>
       {isLoading && <p>Loading...</p>}
       {error && <p>Something went wrong...</p>}
       <h1 className="text-2xl ">Products</h1>
@@ -21,6 +17,6 @@ export default function Product() {
             return <ProductCard key={product.id} product={product} />;
           })}
       </ul>
-    </div>
+    </>
   );
 }

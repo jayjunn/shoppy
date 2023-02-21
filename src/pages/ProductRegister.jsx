@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { imageUpload } from "../api/uploader";
-import { addProduct } from "../api/firebase";
+import useProducts from "../hooks/useProducts";
 
 export default function ProductRegister() {
   const [product, setProduct] = useState();
   const [file, setFile] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState(null);
+  const { addProduct } = useProducts();
+
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     if (name === "file") {
@@ -25,13 +27,17 @@ export default function ProductRegister() {
     setIsLoading(true);
     imageUpload(file)
       .then((url) => {
-        addProduct(product, url);
-      })
-      .then(() => {
-        setSuccess("Product has been registered Successfully");
-        setTimeout(() => {
-          setSuccess(null);
-        }, 3000);
+        addProduct.mutate(
+          { product, url },
+          {
+            onSuccess: () => {
+              setSuccess("Product has been registered Successfully");
+              setTimeout(() => {
+                setSuccess(null);
+              }, 3000);
+            },
+          }
+        );
       })
       .finally(() => setIsLoading(false));
   };
@@ -41,9 +47,9 @@ export default function ProductRegister() {
   return (
     <section className="mb-12 flex flex-col items-center px-1">
       <h1 className="mb-5 text-2xl">New Product Register</h1>
-      <div className="flex h-96 w-full items-center justify-center">
+      <div className="mb-10 flex h-96 w-full items-center justify-center">
         {!file && (
-          <div className="flex h-96 max-h-full w-4/12 items-center justify-center bg-slate-200">
+          <div className="flex h-96 max-h-full w-80 items-center justify-center bg-neutral-700 text-xl text-white">
             Image
           </div>
         )}
@@ -51,7 +57,7 @@ export default function ProductRegister() {
           <img
             src={file && URL.createObjectURL(file)}
             alt="img"
-            className=" max-h-full"
+            className="max-h-full"
           />
         )}
       </div>
@@ -95,9 +101,7 @@ export default function ProductRegister() {
             className={textInputStyle}
             onChange={handleChange}
           >
-            <option value="Women" >
-              Women
-            </option>
+            <option value="Women">Women</option>
             <option value="Men">Men</option>
           </select>
         </label>
@@ -122,7 +126,7 @@ export default function ProductRegister() {
           />
         </label>
         <button
-          className="w-full bg-slate-400 py-4 text-white"
+          className="w-full  bg-neutral-700 py-4 text-white"
           disabled={isLoading}
         >
           {success ? <p>{success}</p> : isLoading ? "Uploading" : "Register"}

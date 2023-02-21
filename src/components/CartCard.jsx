@@ -1,23 +1,41 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { IoAdd, IoRemove, IoTrashOutline } from "react-icons/io5";
-import { useCartContext } from "../context/CartContext";
+import { useAuthContext } from "../context/AuthContext";
+import useCarts from "../hooks/useCarts";
 
 export default function CartCard({ product }) {
   const { id, imageUrl, name, price, quantity, size } = product;
-  const { setCartItem, setQuantity } = useCartContext();
-  const [updatedQuantity, setUpdatedQuantity] = useState(quantity);
+  const { uid } = useAuthContext();
+  const { addOrUpdateCart, deleteFromCart } = useCarts(uid);
 
-  const handleAddQuantity = () => {
-    setUpdatedQuantity(updatedQuantity + 1);
+  const handlePlus = () => {
+    addOrUpdateCart.mutate(
+      { product: { ...product, quantity: quantity + 1 } },
+      {
+        onSuccess: () => {
+          console.log("updated");
+        },
+      }
+    );
   };
 
-  const handleRemoveQuantity = () => {
-    setUpdatedQuantity(updatedQuantity - 1);
+  const handleMinus = () => {
+    console.log(quantity);
+    if (quantity === 1) {
+      handleDelete();
+    }
+    addOrUpdateCart.mutate(
+      { product: { ...product, quantity: quantity - 1 } },
+      { onSuccess: () => console.log("updated") }
+    );
   };
 
-  useEffect(() => {
-    setQuantity(product, updatedQuantity);
-  }, [updatedQuantity]);
+  const handleDelete = () => {
+    deleteFromCart.mutate(
+      { id },
+      { onSuccess: () => console.log("it has been deleted") }
+    );
+  };
 
   return (
     <li key={id} className="mb-2 flex">
@@ -34,21 +52,18 @@ export default function CartCard({ product }) {
             <div className="flex flex-col">
               <p> {size.toUpperCase()}</p>
               <div className="flex">
-                <button onClick={handleRemoveQuantity}>
+                <button onClick={handleMinus}>
                   <IoRemove />
                 </button>
                 <p>{quantity}</p>
-                <button onClick={handleAddQuantity}>
+                <button onClick={handlePlus}>
                   <IoAdd />
                 </button>
               </div>
             </div>
           </div>
         </div>
-        <button
-          className="flex justify-start"
-          onClick={() => setCartItem(product)}
-        >
+        <button className="flex justify-start" onClick={handleDelete}>
           <IoTrashOutline />
         </button>
       </div>

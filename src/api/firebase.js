@@ -2,7 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { getDatabase, ref, get, set, remove, update } from "firebase/database";
+import { getDatabase, ref, get, set, remove } from "firebase/database";
 import { v4 as uuid } from "uuid";
 
 const firebaseConfig = {
@@ -52,7 +52,7 @@ const adminUser = async (user) => {
     });
 };
 
-export const addProduct = async (product, imageUrl) => {
+export const addNewProduct = async (product, imageUrl) => {
   const id = uuid();
   const newProduct = {
     ...product,
@@ -63,6 +63,10 @@ export const addProduct = async (product, imageUrl) => {
     ...(!product.category && { category: "Women" }),
   };
   return set(ref(database, `products/${id}`), newProduct);
+};
+
+export const addOrUpdateToCart = async (uid, product) => {
+  return set(ref(database, `cart/${uid}/${product.id}`), product);
 };
 
 export const getProducts = async () => {
@@ -79,21 +83,13 @@ export const getProducts = async () => {
     });
 };
 
-export const addToCart = async (product, size) => {
-  const id = uuid();
-  const addedItem = { ...product, size, id, quantity: 1 };
-  return set(ref(database, `cart/${id}`), addedItem);
-};
-
-export const getCart = async (callback) => {
-  return get(ref(database, `cart`))
+export const getCart = async (uid) => {
+  return get(ref(database, `cart/${uid}`))
     .then((snapshot) => {
       if (snapshot.exists()) {
         const addProducts = Object.values(snapshot.val());
-        callback(addProducts);
         return addProducts;
       } else {
-        callback([]);
         return [];
       }
     })
@@ -102,14 +98,6 @@ export const getCart = async (callback) => {
     });
 };
 
-export const updateCartItem = async (product, newQuantity) => {
-  const updatedProduct = { ...product, quantity: newQuantity };
-  if (newQuantity) {
-    return set(ref(database, `cart/${product.id}`), updatedProduct);
-  }
-  if (newQuantity === 0 || !newQuantity) {
-    remove(ref(database, `cart/${product.id}`));
-    console.log("deleted");
-  }
-  return;
+export const removeCartItem = (uid, productId) => {
+  remove(ref(database, `cart/${uid}/${productId}`));
 };

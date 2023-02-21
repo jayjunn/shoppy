@@ -1,24 +1,41 @@
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
-import { addToCart } from "../api/firebase";
-import { useCartContext } from "../context/CartContext";
+import { useAuthContext } from "../context/AuthContext";
+import useCarts from "../hooks/useCarts";
 
 export default function Product() {
+  const { uid } = useAuthContext();
   const [selectedOption, setSelectedOption] = useState(null);
   const [validation, setValidation] = useState("");
   const {
-    state: { product },
+    state: {
+      product: { imageUrl, name, price, options, description, id },
+    },
   } = useLocation();
-  const { imageUrl, name, price, options, description } = product;
-  const { addNum } = useCartContext();
+  const { addOrUpdateCart } = useCarts(uid);
 
   const handleOptionClick = (value) => {
     setSelectedOption(value);
   };
-  const handleAddToCart = (product, size) => {
+
+  const handleAddToCart = (e) => {
     if (selectedOption) {
-      addToCart(product, size);
-      addNum();
+      const product = {
+        imageUrl,
+        name,
+        price,
+        id,
+        size: selectedOption,
+        quantity: 1,
+      };
+      addOrUpdateCart.mutate(
+        { product },
+        {
+          onSuccess: () => {
+            console.log("it has been added");
+          },
+        }
+      );
     } else {
       setValidation("Please select a size");
       setTimeout(() => {
@@ -57,8 +74,8 @@ export default function Product() {
           </ul>
         </div>
         <button
-          className="mb-10 w-full border bg-indigo-700 px-10 py-4 text-white"
-          onClick={() => handleAddToCart(product, selectedOption)}
+          className="mb-10 w-full border bg-neutral-700 px-10 py-4 text-white"
+          onClick={handleAddToCart}
         >
           {validation ? `${validation}` : "Add To Cart"}
         </button>
