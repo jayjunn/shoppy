@@ -20,9 +20,8 @@ export default function CartCard({ product }) {
   };
 
   const handleMinus = () => {
-    console.log(quantity);
-    if (quantity === 1) {
-      handleDelete();
+    if (quantity - 1 === 0) {
+      return handleDelete();
     }
     addOrUpdateCart.mutate(
       { product: { ...product, quantity: quantity - 1 } },
