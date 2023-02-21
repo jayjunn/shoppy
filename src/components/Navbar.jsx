@@ -12,6 +12,7 @@ import User from "./User";
 export default function Navbar() {
   const { user, login, logout } = useAuthContext();
   const { numOfProducts } = useCartContext();
+
   return (
     <nav className="flex items-center justify-between p-2">
       <Link to={"/"} className="flex items-center">

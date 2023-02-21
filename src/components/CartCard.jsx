@@ -1,12 +1,12 @@
 import React from "react";
-import { IoAdd, IoRemove } from "react-icons/io5";
+import { IoAdd, IoRemove, IoTrashOutline } from "react-icons/io5";
 
 export default function CartCard({ product }) {
   const { id, imageUrl, name, price, quantity, size } = product;
   return (
-    <li key={id} className="flex mb-2">
+    <li key={id} className="mb-2 flex">
       <img src={imageUrl} alt={name} className="w-3/12 md:w-2/12" />
-      <div className="ml-2">
+      <div className="ml-2 flex w-full justify-between">
         <div>
           <p>{name}</p>
           <p>£{price}.00</p>
@@ -16,7 +16,7 @@ export default function CartCard({ product }) {
               <span className="pr-10">Quantity</span>
             </div>
             <div className="flex flex-col">
-              <p> {size}</p>
+              <p> {size.toUpperCase()}</p>
               <div className="flex">
                 <button>
                   <IoRemove />
@@ -29,6 +29,9 @@ export default function CartCard({ product }) {
             </div>
           </div>
         </div>
+        <button className="flex justify-start">
+          <IoTrashOutline />
+        </button>
       </div>
     </li>
   );

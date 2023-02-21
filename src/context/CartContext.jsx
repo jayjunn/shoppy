@@ -7,10 +7,6 @@ export const CartContextProvider = ({ children }) => {
   const [products, setProducts] = useState();
   const [numOfProducts, setNumOfProducts] = useState();
 
-  useEffect(() => {
-    fetchCart();
-  }, []);
-
   const addNum = () => {
     setNumOfProducts(numOfProducts + 1);
   };
@@ -21,6 +17,9 @@ export const CartContextProvider = ({ children }) => {
     });
   };
 
+  useEffect(() => {
+    fetchCart();
+  }, [numOfProducts]);
   return (
     <CartContext.Provider
       value={{ products, numOfProducts, addNum, fetchCart }}

@@ -1,15 +1,15 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useCartContext } from "../context/CartContext";
 import CartCard from "../components/CartCard";
 export default function Cart() {
-  const { products, fetchCart } = useCartContext();
-  const sumPrice = products.reduce((acc, current) => acc + current["price"], 0);
+  const { products } = useCartContext();
+
+  const sumPrice =
+    products && products.reduce((acc, current) => acc + current["price"], 0);
+
   const deliveryFee = (sumPrice) => {
     return sumPrice >= 200 ? 0 : 2;
   };
-  useEffect(() => {
-    fetchCart();
-  }, []);
 
   return (
     <section className="mt-10 flex flex-col p-4 lg:flex-row lg:justify-between">

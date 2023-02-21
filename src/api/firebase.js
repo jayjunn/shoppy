@@ -81,13 +81,11 @@ export const getProducts = async () => {
 
 export const addToCart = async (product, size) => {
   const id = uuid();
-  const addedItem = { ...product, size, id, quantity: 1};
-  console.log(addedItem);
+  const addedItem = { ...product, size, id, quantity: 1 };
   return set(ref(database, `cart/${id}`), addedItem);
 };
 
 export const getCart = async (callback) => {
-    console.log('get cart called')
   return get(ref(database, `cart`))
     .then((snapshot) => {
       if (snapshot.exists()) {
