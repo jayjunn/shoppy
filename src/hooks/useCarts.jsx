@@ -1,7 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { getCart, addOrUpdateToCart, removeCartItem } from "../api/firebase";
+import { useAuthContext } from "../context/AuthContext";
 
-export default function useCarts(uid) {
+export default function useCarts() {
+  const { uid } = useAuthContext();
   const queryClient = useQueryClient();
 
   const cartQuery = useQuery(["carts", uid], () => getCart(uid), {
@@ -15,9 +17,8 @@ export default function useCarts(uid) {
     }
   );
 
-  const deleteFromCart = useMutation(
-    ({ id }) => removeCartItem(uid, id),
-    { onSuccess: () => queryClient.invalidateQueries(["carts"], uid) }
-  );
+  const deleteFromCart = useMutation(({ id }) => removeCartItem(uid, id), {
+    onSuccess: () => queryClient.invalidateQueries(["carts"], uid),
+  });
   return { cartQuery, addOrUpdateCart, deleteFromCart };
 }

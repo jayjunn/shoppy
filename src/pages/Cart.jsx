@@ -1,12 +1,10 @@
 import React from "react";
 import CartCard from "../components/CartCard";
-import { useAuthContext } from "../context/AuthContext";
 import useCarts from "../hooks/useCarts";
 export default function Cart() {
-  const { uid } = useAuthContext();
   const {
     cartQuery: { isLoading, data: products },
-  } = useCarts(uid);
+  } = useCarts();
   const isEmptyList = products && products.length === 0;
   const sumPrice =
     products && products.reduce((acc, current) => acc + current["price"], 0);
@@ -15,13 +13,16 @@ export default function Cart() {
     return sumPrice >= 200 ? 0 : 2;
   };
 
+
+  console.log(products)
+
   return (
     <section className="mt-10 flex flex-col p-4 lg:flex-row lg:justify-between">
       {isEmptyList && <p>Your cart is empty</p>}
       {isLoading && <p>is loading...</p>}
       {!isEmptyList && (
-        <div>
-          <ul className="lg:w-3/6">
+        <>
+          <ul className="lg:w-4/6 pr-10">
             {products?.map((product) => {
               return <CartCard key={product.id} product={product} />;
             })}
@@ -48,7 +49,7 @@ export default function Cart() {
               Place an order
             </button>
           </div>
-        </div>
+        </>
       )}
     </section>
   );

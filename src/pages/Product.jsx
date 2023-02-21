@@ -1,24 +1,35 @@
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
-import { useAuthContext } from "../context/AuthContext";
 import useCarts from "../hooks/useCarts";
 
 export default function Product() {
-  const { uid } = useAuthContext();
   const [selectedOption, setSelectedOption] = useState(null);
+  const [isSuccess, setIsSuccess] = useState(null);
   const [validation, setValidation] = useState("");
   const {
     state: {
       product: { imageUrl, name, price, options, description, id },
     },
   } = useLocation();
-  const { addOrUpdateCart } = useCarts(uid);
+
+  const { addOrUpdateCart } = useCarts();
+  const {
+    cartQuery: { data: carts },
+  } = useCarts();
 
   const handleOptionClick = (value) => {
     setSelectedOption(value);
   };
 
   const handleAddToCart = (e) => {
+    const duplicatedSizeItem = carts.find(
+      (product) => product.id === id && product.size === selectedOption
+    );
+
+    const duplicatedItem = carts.find((product) => product.id === id);
+
+    console.log(duplicatedItem);
+
     if (selectedOption) {
       const product = {
         imageUrl,
@@ -26,13 +37,16 @@ export default function Product() {
         price,
         id,
         size: selectedOption,
-        quantity: 1,
+        quantity: duplicatedSizeItem ? duplicatedSizeItem.quantity + 1 : 1,
       };
       addOrUpdateCart.mutate(
         { product },
         {
           onSuccess: () => {
-            console.log("it has been added");
+            setIsSuccess("Item has been added");
+            setTimeout(() => {
+              setIsSuccess(null);
+            }, 2000);
           },
         }
       );
@@ -77,7 +91,9 @@ export default function Product() {
           className="mb-10 w-full border bg-neutral-700 px-10 py-4 text-white"
           onClick={handleAddToCart}
         >
-          {validation ? `${validation}` : "Add To Cart"}
+          {validation && `${validation}`}
+          {isSuccess && `${isSuccess}`}
+          {!isSuccess && !validation && "Add To Cart"}
         </button>
         <div className="mb-10 md:mb-0">
           <h1 className="mb-3 uppercase">Product Description</h1>

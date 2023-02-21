@@ -1,12 +1,10 @@
 import React from "react";
 import { IoAdd, IoRemove, IoTrashOutline } from "react-icons/io5";
-import { useAuthContext } from "../context/AuthContext";
 import useCarts from "../hooks/useCarts";
 
 export default function CartCard({ product }) {
   const { id, imageUrl, name, price, quantity, size } = product;
-  const { uid } = useAuthContext();
-  const { addOrUpdateCart, deleteFromCart } = useCarts(uid);
+  const { addOrUpdateCart, deleteFromCart } = useCarts();
 
   const handlePlus = () => {
     addOrUpdateCart.mutate(

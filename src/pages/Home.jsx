@@ -14,8 +14,8 @@ export default function Home() {
     <div>
       {isLoading && <p>Loading...</p>}
       {error && <p>Something went wrong...</p>}
-      <h1 className="text-2xl ">Home</h1>
-      <ul className="grid grid-cols-2 gap-1 lg:grid-cols-3 xl:grid-cols-4">
+      <h1 className="w-full text-center pt-4">Home</h1>
+      <ul className="grid grid-cols-2 gap-1 pt-4 lg:grid-cols-3 xl:grid-cols-4 p-4">
         {products &&
           products.map((product) => {
             return <ProductCard key={product.id} product={product} />;
